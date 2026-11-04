@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الإجازات</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f5;--surface:#fff;--ink:#101a2e;--muted:#64708a;--line:#dde2ea;--accent:#2b50e6;--accent-ink:#fff;--warn:#b45309;--warn-bg:#fdf0d8;--bad:#b42318;--ok:#0f7a4d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1322;--surface:#161e33;--ink:#eef1f8;--muted:#93a0bd;--line:#26304b;--accent:#6f8bff;--accent-ink:#0d1322;--warn:#f5b657;--warn-bg:#3a2d12;--bad:#ff8a7e;--ok:#5fd6a1}}
+:root[data-theme="dark"]{--bg:#0d1322;--surface:#161e33;--ink:#eef1f8;--muted:#93a0bd;--line:#26304b;--accent:#6f8bff;--accent-ink:#0d1322;--warn:#f5b657;--warn-bg:#3a2d12;--bad:#ff8a7e;--ok:#5fd6a1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.app{max-width:560px;margin:0 auto;padding:16px 16px 110px}
+h1{font-size:26px;margin:8px 0 14px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.stat b{display:block;font-size:22px;font-weight:700}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.low b{color:var(--warn)}
+.search{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:16px}
+.chips{display:flex;gap:8px;margin:12px 0;overflow-x:auto}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.item.low{border-inline-start:5px solid var(--warn)}
+.info{flex:1;min-width:0}
+.name{font-weight:500;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:0 7px;font-size:12px;margin-inline-start:6px}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;font-family:inherit}
+.qty button:active{background:var(--accent);color:var(--accent-ink)}
+.qty output{min-width:34px;text-align:center;font-weight:700;font-size:18px}
+.del{background:none;border:0;color:var(--muted);font-size:13px;padding:4px 0;font-family:inherit}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.fab{position:fixed;inset-inline-start:50%;transform:translateX(50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:15px 28px;font:inherit;font-weight:700;font-size:16px;box-shadow:0 8px 24px rgba(43,80,230,.35)}
+[dir=rtl] .fab{transform:translateX(50%)}
+.sheet{position:fixed;inset:0;background:rgba(8,12,24,.5);display:none;align-items:flex-end;z-index:20}
+.sheet.open{display:flex}
+.panel{background:var(--surface);width:100%;max-width:560px;margin:0 auto;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.panel{animation:none}}
+.panel h2{margin:0 0 14px;font-size:20px}
+.panel label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.panel input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.save{width:100%;margin-top:18px;padding:14px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:700;font-size:16px}
+.cancel{width:100%;margin-top:6px;padding:12px;border:0;background:none;color:var(--muted);font:inherit}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:14px}
+.ro .fab,.ro .qty button,.ro .del{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#setup{display:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+#setup h2{margin:0 0 8px;font-size:18px}#setup p{color:var(--muted);font-size:14px}
+#setup textarea{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:10px;font:13px monospace;direction:ltr}
+.nocfg #setup{display:block}.nocfg .stats,.nocfg .search,.nocfg .chips,.nocfg #list,.nocfg .fab{display:none}
+.err{color:var(--bad)!important;font-size:13px}.foot{color:var(--muted);font-size:12px;text-align:center}
+.acts{display:flex;gap:6px}
+#login{display:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+#login h2{margin:0 0 10px;font-size:18px}
+#login input{width:100%;margin-bottom:10px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.nologin #login{display:block}.nologin .stats,.nologin .search,.nologin .chips,.nologin #list,.nologin .fab{display:none}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;font:inherit;font-weight:500}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.stats{grid-template-columns:repeat(2,1fr)}
+.tools{display:flex;gap:8px;margin-bottom:12px}
+.tools select{flex:1;padding:9px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.nm{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:none;border:0;padding:0;font:inherit;font-weight:500;font-size:16px;color:var(--ink);text-align:start}
+.in{color:var(--ok)}.neg{color:var(--bad)}.item>b{font-size:18px}
+.pf{display:grid;gap:8px;margin-bottom:12px}
+.pf input,.pf select{padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:16px}
+.panel{max-height:92vh;overflow:auto}
+.nocfg .tabs,.nocfg section,.nologin .tabs,.nologin section{display:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.btnrow{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.btn.ok{background:var(--ok);color:var(--accent-ink);border:0}.btn.no{background:var(--bad);color:var(--accent-ink);border:0}
+.hist{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.7}
+h3{font-size:15px;margin:16px 0 8px}
+.st3{grid-template-columns:repeat(3,1fr)}
+.s-approved{color:var(--ok);background:transparent;border:1px solid currentColor}
+.s-rejected,.s-cancelled{color:var(--bad);background:transparent;border:1px solid currentColor}
+.panel select,.pf textarea,#eForm textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+#eForm textarea{background:var(--surface)}
+code{display:block;direction:ltr;word-break:break-all;background:var(--bg);padding:8px;border-radius:8px}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body class="nocfg">
+<div class="app">
+  <div class="top"><h1>الإجازات</h1><div class="acts"><span class="meta" id="who"></span><button class="chip" id="out" hidden>خروج</button></div></div>
+  <div id="note" class="note" hidden></div>
+  <div id="setup">
+    <h2>ربط المخزن بـ Firebase</h2>
+    <p>الصق إعدادات تطبيق الويب من Firebase (Project settings ← Your apps ← Config) ثم اضغط «ربط المخزن».</p>
+    <textarea id="cfgText" rows="8" placeholder="const firebaseConfig = { apiKey: ... }"></textarea>
+    <p id="cfgErr" class="err"></p>
+    <button class="save" id="link">ربط المخزن</button>
+  </div>
+  <div id="login">
+    <h2>تسجيل الدخول</h2>
+    <input id="em" inputmode="email" autocomplete="username" placeholder="رقم الهاتف أو البريد" dir="ltr">
+    <input id="pw" type="password" autocomplete="current-password" placeholder="كلمة المرور" dir="ltr">
+    <p id="loginErr" class="err"></p>
+    <button class="save" id="loginBtn">دخول</button>
+  </div>
+  <div id="boot" class="card" hidden><h2 style="margin-top:0">حسابك غير مفعّل بعد</h2><p class="meta">أرسل هذا المعرّف إلى المسؤول ليفعّل حسابك:</p><code id="uidTxt"></code></div>
+  <div class="tabs" id="tabs" hidden></div>
+  <section id="v-me" hidden>
+    <div class="stats st3" id="myStats"></div>
+    <button class="chip" id="pwBtn" style="margin-bottom:10px">تغيير كلمة المرور</button>
+    <div id="myList"></div>
+  </section>
+  <section id="v-ap" hidden><div id="apList"></div></section>
+  <section id="v-st" hidden>
+    <div id="eForm" class="card" hidden>
+      <b>إضافة موظفين وإنشاء حساباتهم</b>
+      <div><button class="chip" id="shareBtn" style="margin:8px 0">نسخ رابط الدخول للموظفين</button></div>
+      <p class="meta">اكتب كل موظف في سطر: الاسم، الهاتف (مثال: أحمد علي، 07701234567). اكتب أرقام الجميع بالصيغة نفسها.</p>
+      <div class="pf">
+        <textarea id="eBulk" rows="5" placeholder="أحمد علي، 07701234567"></textarea>
+        <select id="eRole"><option value="employee">موظف</option><option value="manager">مدير</option><option value="hr">موارد بشرية</option><option value="admin">مسؤول</option></select>
+        <select id="eMgr"></select>
+        <input id="eAnnual" type="number" value="21" placeholder="الرصيد السنوي (أيام)">
+        <input id="eTime" type="number" value="4" placeholder="ساعات زمنية شهرياً">
+        <input id="eCC" value="964" dir="ltr" placeholder="رمز الدولة للواتساب">
+        <button class="save" id="eAdd" style="margin:0">إنشاء الحسابات</button>
+      </div>
+      <div id="eOut"></div>
+    </div>
+    <div id="stList"></div>
+  </section>
+  <p class="foot" id="proj"></p>
+</div>
+<button class="fab" id="fab" hidden>+ طلب إجازة</button>
+<div class="sheet" id="sheet"><div class="panel">
+  <h2>طلب إجازة</h2>
+  <label for="rType">نوع الإجازة</label>
+  <select id="rType"><option value="annual">سنوية</option><option value="sick">مرضية</option><option value="emergency">طارئة</option><option value="time">زمنية (ساعات)</option></select>
+  <div class="row"><div><label for="rFrom">التاريخ / من</label><input id="rFrom" type="date"></div><div id="rToW"><label for="rTo">إلى تاريخ</label><input id="rTo" type="date"></div></div>
+  <div class="row" id="rTimeW" hidden><div><label for="rStart">وقت البدء</label><input id="rStart" type="time"></div><div><label for="rHours">عدد الساعات</label><input id="rHours" type="number" step="0.5" min="0.5" value="1"></div></div>
+  <label for="rReason">السبب</label><input id="rReason" autocomplete="off">
+  <p id="rErr" class="err" hidden></p>
+  <button class="save" id="rSend">إرسال الطلب</button><button class="cancel" id="rCancel">إلغاء</button>
+</div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const okCfg=o=>o&&o.apiKey&&o.projectId&&o.appId;
+const ST={pending_manager:"بانتظار المدير المباشر",pending_hr:"بانتظار الموارد البشرية",approved:"موافق عليها",rejected:"مرفوضة",cancelled:"ملغاة"};
+const TY={annual:"سنوية",sick:"مرضية",emergency:"طارئة",time:"زمنية"};
+const RL={employee:"موظف",manager:"مدير",hr:"موارد بشرية",admin:"مسؤول"};
+const AC={submit:"قدّم الطلب",approve:"وافق",reject:"رفض",cancel:"ألغى الطلب"};
+let cfg=null,DB=null,uid=null,me=null,users=[],mine=[],team=[],all=[],subs=[],view="me",lastRole=null;
+const note=m=>{const n=$("note");n.textContent=m;n.hidden=!m};
+const fmt=t=>new Date(Number(t)||0).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"});
+const today=()=>new Date().toLocaleDateString("sv-SE");
+function norm(v){return v.replace(/[٠-٩]/g,c=>"٠١٢٣٤٥٦٧٨٩".indexOf(c)).replace(/\D/g,"").replace(/^00/,"").replace(/^0/,"")}
+const emailOf=v=>{v=v.trim();return v.includes("@")?v:norm(v)+"@staff.example.com"};
+function loadCfg(){
+  try{
+    const h=location.hash.match(/c=([^&]+)/);
+    if(h){const o=JSON.parse(atob(decodeURIComponent(h[1])));
+      if(okCfg(o)){try{localStorage.setItem("lv-cfg",JSON.stringify(o))}catch(e){}
+        history.replaceState(null,"",location.pathname+location.search);return o}}
+    const s=JSON.parse(localStorage.getItem("lv-cfg")||"null");return okCfg(s)?s:null;
+  }catch(e){return null}
+}
+function bal(list,u){
+  const y=today().slice(0,4),ym=today().slice(0,7),ap=list.filter(l=>l.status==="approved"),pd=list.filter(l=>String(l.status).startsWith("pending"));
+  const d=a=>a.filter(l=>(l.type==="annual"||l.type==="emergency")&&String(l.from).slice(0,4)===y).reduce((s,l)=>s+(+l.days||0),0);
+  const h=a=>a.filter(l=>l.type==="time"&&String(l.from).slice(0,7)===ym).reduce((s,l)=>s+(+l.hours||0),0);
+  return{annualLeft:(+u.annual||0)-d(ap)-d(pd),pendA:d(pd),timeLeft:(+u.timeHours||0)-h(ap)-h(pd)};
+}
+const loadJs=u=>new Promise((ok,no)=>{const e=document.createElement("script");e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)});
+const fbOk=()=>!!(window.firebase&&firebase.auth&&firebase.firestore);
+async function ensureFb(){
+  if(fbOk())return true;
+  try{for(const n of["app","firestore","auth"])await loadJs("https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-"+n+"-compat.js")}catch(e){}
+  return fbOk();
+}
+async function connect(){
+  document.body.classList.remove("nocfg");
+  if(!(await ensureFb())){note("تعذّر تحميل Firebase. افتح الصفحة من رابط GitHub Pages (https://...github.io) وليس من معاينة Claude أو من ملف على الجهاز، وتحقق من الإنترنت.");return}
+  try{
+    firebase.apps.length||firebase.initializeApp(cfg);
+    DB=firebase.firestore();$("proj").textContent="المشروع: "+cfg.projectId;
+    firebase.auth().onAuthStateChanged(u=>{
+      subs.forEach(f=>f());subs=[];me=null;users=[];mine=[];team=[];all=[];lastRole=null;uid=u?u.uid:null;
+      document.body.classList.toggle("nologin",!u);$("out").hidden=!u;
+      if(!u){render();return}
+      subs.push(DB.collection("users").doc(uid).onSnapshot(d=>{me=d.exists?d.data():null;listen();render()},()=>{me=null;render()}));
+    });
+  }catch(e){note("إعدادات Firebase غير صحيحة.")}
+}
+function listen(){
+  if(!me||lastRole===me.role)return;
+  lastRole=me.role;subs.splice(1).forEach(f=>f());
+  const q=s=>s.docs.map(d=>({id:d.id,...d.data()}));
+  subs.push(DB.collection("leaves").where("uid","==",uid).onSnapshot(s=>{mine=q(s);render()},()=>{}));
+  subs.push(DB.collection("leaves").where("mgr","==",uid).onSnapshot(s=>{team=q(s);render()},()=>{}));
+  if(me.role==="hr"||me.role==="admin"){
+    subs.push(DB.collection("leaves").onSnapshot(s=>{all=q(s);render()},()=>{}));
+    subs.push(DB.collection("users").onSnapshot(s=>{users=q(s);render()},()=>{}));
+  }
+}
+function lv(l,btns){
+  const when=l.type==="time"?`${esc(l.from)} • ${esc(l.start||"")} • ${+l.hours||0} ساعة`:`${esc(l.from)} ← ${esc(l.to)} • ${+l.days||0} يوم`;
+  return`<div class="card"><div class="name">${esc(l.name||"")} — ${TY[l.type]||""} <span class="tag s-${esc(l.status)}">${ST[l.status]||esc(l.status)}</span></div>
+  <div class="meta">${when}</div>${l.reason?`<div class="meta">${esc(l.reason)}</div>`:""}
+  <div class="hist">${(l.hist||[]).map(h=>`• ${esc(h.by||"")} (${RL[h.role]||""}): ${AC[h.act]||""} — ${fmt(h.at)}${h.note?" — "+esc(h.note):""}`).join("<br>")}</div>${btns||""}</div>`;
+}
+function render(){
+  const staff=me&&(me.role==="hr"||me.role==="admin"),adm=me&&me.role==="admin",mg=me&&(me.role==="manager"||staff);
+  $("who").textContent=me?me.name||"":"";
+  $("boot").hidden=!(uid&&!me);if(uid&&!me)$("uidTxt").textContent=uid;
+  const pc=team.filter(l=>l.status==="pending_manager").length+(staff?all.filter(l=>l.status==="pending_hr"&&l.uid!==uid).length:0);
+  const tabs=me?[["me","طلباتي"],...(mg?[["ap","الموافقات"+(pc?" ("+pc+")":"")]]:[]),...(staff?[["st","الموظفون"]]:[])]:[];
+  if(!tabs.some(t=>t[0]===view))view="me";
+  $("tabs").hidden=!me;
+  $("tabs").innerHTML=tabs.map(t=>`<button class="tab" data-v="${t[0]}" aria-pressed="${t[0]===view}">${t[1]}</button>`).join("");
+  ["me","ap","st"].forEach(v=>$("v-"+v).hidden=!(me&&v===view));
+  $("fab").hidden=!(me&&view==="me");
+  if(!me)return;
+  const b=bal(mine,me);
+  $("myStats").innerHTML=`<div class="stat"><b>${b.annualLeft}</b><span>رصيدك (يوم)</span></div><div class="stat"><b>${b.pendA}</b><span>أيام قيد الموافقة</span></div><div class="stat"><b>${b.timeLeft}</b><span>ساعات زمنية متبقية</span></div>`;
+  const L=[...mine].sort((a,c)=>c.createdAt-a.createdAt);
+  $("myList").innerHTML=L.length?L.map(l=>lv(l,["pending_manager","pending_hr"].includes(l.status)?`<div class="btnrow"><button class="btn" data-a="cancel" data-id="${esc(l.id)}">إلغاء الطلب</button></div>`:"")).join(""):'<div class="empty">لا توجد طلبات بعد.</div>';
+  if(mg){
+    const btn=l=>`<div class="btnrow"><button class="btn ok" data-a="approve" data-id="${esc(l.id)}">موافقة</button><button class="btn no" data-a="reject" data-id="${esc(l.id)}">رفض</button></div>`;
+    const bl=l=>{const u=users.find(x=>x.id===l.uid);if(!u)return"";const k=bal(all.filter(x=>x.uid===l.uid),u);return`<div class="meta">رصيده: ${k.annualLeft} يوم • زمنية: ${k.timeLeft} ساعة</div>`};
+    const p1=team.filter(l=>l.status==="pending_manager"),p2=staff?all.filter(l=>l.status==="pending_hr"&&l.uid!==uid):[];
+    const rest=staff?[...all].sort((a,c)=>c.createdAt-a.createdAt).slice(0,40):[];
+    $("apList").innerHTML=(p1.length?"<h3>بانتظار موافقتك كمدير</h3>"+p1.map(l=>lv(l,btn(l))).join(""):"")+(p2.length?"<h3>بانتظار الموارد البشرية</h3>"+p2.map(l=>lv(l,bl(l)+btn(l))).join(""):"")+(rest.length?"<h3>كل الطلبات (آخر 40)</h3>"+rest.map(l=>lv(l)).join(""):"")||'<div class="empty">لا توجد طلبات بانتظارك.</div>';
+  }
+  if(staff){
+    const v=$("eMgr").value;
+    $("eMgr").innerHTML='<option value="">بدون مدير مباشر (الموارد البشرية مباشرة)</option>'+users.filter(u=>["manager","hr","admin"].includes(u.role)).map(u=>`<option value="${esc(u.id)}">${esc(u.name||"")}</option>`).join("");
+    $("eMgr").value=v;$("eForm").hidden=!adm;
+    $("stList").innerHTML=[...users].sort((a,c)=>String(a.name).localeCompare(String(c.name),"ar")).map(u=>{const k=bal(all.filter(l=>l.uid===u.id),u);const m=users.find(x=>x.id===u.managerUid);
+      return`<div class="item"><div class="info"><div class="name">${esc(u.name||"")}</div><div class="meta">${RL[u.role]||""} • ${esc(u.phone||"")}${m?" • المدير: "+esc(m.name||""):""}</div>
+      <div class="meta">الرصيد ${k.annualLeft} من ${+u.annual||0} يوم • زمنية ${k.timeLeft} ساعة</div>
+      ${adm?`<button class="del" data-ed="${esc(u.id)}">تعديل الرصيد</button> <button class="del" data-ud="${esc(u.id)}">حذف</button>`:""}</div></div>`}).join("")||'<div class="empty">لا يوجد موظفون.</div>';
+  }
+}
+async function act(id,a){
+  const l=[...all,...team,...mine].find(x=>x.id===id);if(!l||!me)return;
+  const hr=me.role==="hr"||me.role==="admin";let st;
+  if(a==="cancel"&&l.uid===uid)st="cancelled";
+  else if(l.status==="pending_manager"&&l.mgr===uid&&l.uid!==uid)st=a==="approve"?"pending_hr":"rejected";
+  else if(l.status==="pending_hr"&&hr&&l.uid!==uid)st=a==="approve"?"approved":"rejected";
+  else return;
+  let n="";if(a==="reject"){n=prompt("سبب الرفض (اختياري)");if(n===null)return}
+  try{await DB.collection("leaves").doc(id).update({status:st,updatedAt:Date.now(),hist:firebase.firestore.FieldValue.arrayUnion({by:me.name||"",role:me.role,act:a,at:Date.now(),note:n})})}
+  catch(e){note("تعذّر تنفيذ الإجراء ("+(e.code||"خطأ")+").")}
+}
+document.body.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.v){view=b.dataset.v;render();return}
+  if(b.dataset.a){act(b.dataset.id,b.dataset.a);return}
+  const u=users.find(x=>x.id===(b.dataset.ed||b.dataset.ud));if(!u)return;
+  if(b.dataset.ed){const a=prompt("الرصيد السنوي (أيام)",u.annual);if(a===null)return;const t=prompt("ساعات الإجازة الزمنية شهرياً",u.timeHours);if(t===null)return;
+    DB.collection("users").doc(u.id).update({annual:Number(a)||0,timeHours:Number(t)||0}).catch(()=>note("تعذّر التعديل."))}
+  else if(u.id!==uid&&confirm("حذف حساب «"+u.name+"»؟ سيفقد الدخول للنظام."))DB.collection("users").doc(u.id).delete().catch(()=>note("تعذّر الحذف."));
+});
+const sheet=$("sheet");
+const close_=()=>sheet.classList.remove("open");
+function tg(){const t=$("rType").value==="time";$("rToW").hidden=t;$("rTimeW").hidden=!t}
+$("rType").onchange=tg;
+$("fab").onclick=()=>{["rTo","rReason","rStart"].forEach(k=>$(k).value="");$("rFrom").value=today();$("rType").value="annual";$("rHours").value=1;$("rErr").hidden=true;tg();sheet.classList.add("open")};
+$("rCancel").onclick=close_;sheet.addEventListener("click",e=>{if(e.target===sheet)close_()});
+$("rSend").onclick=async()=>{
+  const er=m=>{$("rErr").textContent=m;$("rErr").hidden=false};
+  const t=$("rType").value,f=$("rFrom").value,b=bal(mine,me);let to=$("rTo").value,days=0,hours=0;
+  if(!f)return er("اختر التاريخ.");
+  if(t==="time"){hours=+$("rHours").value;to=f;
+    if(!$("rStart").value||!(hours>0))return er("اكتب وقت البدء وعدد الساعات.");
+    if(hours>b.timeLeft)return er("رصيدك من الساعات الزمنية هذا الشهر لا يكفي ("+b.timeLeft+").")}
+  else{if(!to||to<f)return er("تاريخ النهاية يجب ألا يسبق البداية.");
+    days=Math.round((new Date(to)-new Date(f))/864e5)+1;
+    if((t==="annual"||t==="emergency")&&days>b.annualLeft)return er("رصيدك لا يكفي ("+b.annualLeft+" يوم).")}
+  const m=me.managerUid||"";
+  $("rSend").disabled=true;
+  try{
+    await DB.collection("leaves").add({uid,name:me.name||"",mgr:m,type:t,from:f,to,days,hours,start:$("rStart").value,reason:$("rReason").value.trim(),
+      status:m?"pending_manager":"pending_hr",hist:[{by:me.name||"",role:me.role,act:"submit",at:Date.now(),note:""}],createdAt:Date.now()});
+    close_();
+  }catch(e){er("تعذّر إرسال الطلب ("+(e.code||"خطأ")+"). تأكد من القواعد وملفك الشخصي.")}
+  $("rSend").disabled=false;
+};
+$("eAdd").onclick=async()=>{
+  const lines=$("eBulk").value.split("\n").map(x=>x.trim()).filter(Boolean),out=[];
+  if(!lines.length)return;
+  $("eAdd").disabled=true;
+  const sec=firebase.apps.find(a=>a.name==="sec")||firebase.initializeApp(cfg,"sec");
+  const cc=norm($("eCC").value);
+  for(const ln of lines){
+    const[name,phone]=ln.split(/[,،\t]/).map(x=>x.trim()),p=norm(phone||"");
+    if(!name||!p){out.push({name:ln,err:"سطر غير صالح"});continue}
+    const pass=String(crypto.getRandomValues(new Uint32Array(1))[0]%900000+100000);
+    try{
+      const c=await sec.auth().createUserWithEmailAndPassword(p+"@staff.example.com",pass);
+      await sec.auth().signOut();
+      await DB.collection("users").doc(c.user.uid).set({name,phone:phone,role:$("eRole").value,managerUid:$("eMgr").value,annual:+$("eAnnual").value||0,timeHours:+$("eTime").value||0,createdAt:Date.now()});
+      out.push({name,phone,pass,wa:p.startsWith(cc)?p:cc+p});
+    }catch(e){out.push({name,phone,err:e.code==="auth/email-already-in-use"?"الحساب موجود مسبقاً":"تعذّر الإنشاء ("+(e.code||"خطأ")+")"})}
+  }
+  const link=location.href.split("#")[0]+"#c="+encodeURIComponent(btoa(JSON.stringify(cfg)));
+  $("eOut").innerHTML=out.map(r=>{
+    if(r.err)return`<div class="card"><b>${esc(r.name)}</b><div class="err">${esc(r.err)}</div></div>`;
+    const tx=`مرحباً ${r.name}\nنظام الإجازات: ${link}\nالدخول برقم الهاتف: ${r.phone}\nكلمة المرور: ${r.pass}`;
+    return`<div class="card"><b>${esc(r.name)}</b><div class="meta" dir="ltr">${esc(r.phone)} / ${esc(r.pass)}</div><a href="https://wa.me/${esc(r.wa)}?text=${encodeURIComponent(tx)}" target="_blank" rel="noopener">إرسال عبر واتساب</a></div>`}).join("")+'<p class="meta">احفظ كلمات المرور الآن، فلن تظهر مرة أخرى.</p>';
+  $("eBulk").value="";$("eAdd").disabled=false;
+};
+$("shareBtn").onclick=async()=>{
+  const u=location.href.split("#")[0]+"#c="+encodeURIComponent(btoa(JSON.stringify(cfg)));
+  try{await navigator.clipboard.writeText(u);note("تم نسخ رابط الدخول. أرسله للموظفين.")}catch(e){prompt("انسخ الرابط:",u)}
+};
+$("pwBtn").onclick=async()=>{
+  const p=prompt("كلمة المرور الجديدة (6 أحرف على الأقل)");if(!p)return;
+  try{await firebase.auth().currentUser.updatePassword(p);note("تم تغيير كلمة المرور.")}
+  catch(e){note("تعذّر التغيير. سجّل الخروج ثم الدخول من جديد وحاول مرة أخرى.")}
+};
+$("link").onclick=()=>{
+  const o={};
+  for(const m of $("cfgText").value.matchAll(/(\w+)\s*:\s*["']([^"']+)["']/g))o[m[1]]=m[2];
+  if(!okCfg(o)){$("cfgErr").textContent="لم أجد apiKey وprojectId وappId. انسخ الإعدادات كاملة.";return}
+  cfg=o;try{localStorage.setItem("lv-cfg",JSON.stringify(o))}catch(e){}
+  connect();
+};
+async function login(){
+  $("loginErr").textContent="";
+  try{await firebase.auth().signInWithEmailAndPassword(emailOf($("em").value),$("pw").value);$("pw").value=""}
+  catch(e){const c=e&&e.code||"";$("loginErr").textContent=c==="auth/network-request-failed"?"تحقق من اتصال الإنترنت.":(c==="auth/operation-not-allowed"||c==="auth/configuration-not-found")?"لم تُفعَّل طريقة Email/Password في Firebase Authentication.":(c==="auth/invalid-credential"||c==="auth/wrong-password"||c==="auth/user-not-found"||c==="auth/invalid-email")?"رقم الهاتف أو كلمة المرور غير صحيحة.":"تعذّر الدخول ("+(c||"خطأ")+")."}
+}
+$("loginBtn").onclick=login;
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+$("out").onclick=()=>firebase.auth().signOut();
+cfg=loadCfg();if(cfg)connect();
+</script>
+</body>
+</html>
