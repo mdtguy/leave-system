@@ -90,6 +90,10 @@ code{display:block;direction:ltr;word-break:break-all;background:var(--bg);paddi
 [hidden]{display:none!important}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2b50e6">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body class="nocfg">
 <div class="app">
@@ -345,6 +349,7 @@ $("loginBtn").onclick=login;
 $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("out").onclick=()=>firebase.auth().signOut();
 cfg=loadCfg();if(cfg)connect();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>
