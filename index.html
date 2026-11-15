@@ -114,7 +114,7 @@ optgroup{font-style:normal}
 <div id="wt1" class="hide"><label>من الساعة</label><input type="time" id="ft1"></div>
 <div id="wt2" class="hide"><label>إلى الساعة</label><input type="time" id="ft2"></div>
 <div><label>المدة</label><input id="fd" readonly value="1 يوم"></div>
-<div><label>الموظف البديل</label><select id="fs" required></select></div>
+<div><label>الموظف البديل (اختياري)</label><select id="fs"></select></div>
 <div style="grid-column:1/-1"><label>الملاحظات / السبب</label><input id="fn" placeholder="اختياري"></div>
 </div><div style="margin-top:14px"><button class="btn">إرسال الطلب</button></div>
 <div id="fm"></div></form></div>
@@ -260,18 +260,18 @@ const pk=own&&["sup","lead","mgr","hr"].includes(role());$("fe").innerHTML=own&&
 $("fy").innerHTML=TYPES.filter(t=>t!=="غياب مضاعف"||canAbs()).map(t=>`<option>${t}</option>`).join("");togType()}
 function togType(){const tm=$("fy").value==="زمنية";
 $("wend").classList.toggle("hide",tm);$("wt1").classList.toggle("hide",!tm);$("wt2").classList.toggle("hide",!tm);
-const ab=$("fy").value==="غياب مضاعف";$("fs").required=!ab;$("fn").required=ab;$("fn").placeholder=ab?"سبب الغياب (إلزامي)":"اختياري";$("fb").required=!tm;$("la").textContent=tm?"التاريخ":"تاريخ البدء";calc()}
+const ab=$("fy").value==="غياب مضاعف";$("fs").required=false;$("fn").required=ab;$("fn").placeholder=ab?"سبب الغياب (إلزامي)":"اختياري";$("fb").required=!tm;$("la").textContent=tm?"التاريخ":"تاريخ البدء";calc()}
 function calc(){const tm=$("fy").value==="زمنية",a=$("fa").value,b=tm?a:$("fb").value;
 if(tm){const x=$("ft1").value,y=$("ft2").value;$("fd").value=x&&y&&mins(y)>mins(x)?n1((mins(y)-mins(x))/60)+" ساعة":"-"}
 else $("fd").value=a&&b&&b>=a?daysBetween(a,b)+" يوم"+($("fy").value==="غياب مضاعف"?" (يُخصم "+daysBetween(a,b)*2+")":""):"-";info()}
 function info(){const i=$("fe").value;$("ft").value=i===""?"":STAFF[i][1];$("fdp").value=i===""?"":dept(+i);
 const ym=($("fa").value||today).slice(0,7);
 $("fr").value=i===""?"":`اعتيادية: ${S.quota-annUsed(+i)-annPend(+i)} يوم (هذا الشهر ${annM(+i,ym)}/${S.mq}) · زمنية: ${n1(S.hq-hrsM(+i,ym))} ساعة`;fillSub()}
-function fillSub(){const e=$("fe").value,cur=$("fs").value;if(e===""){$("fs").innerHTML='<option value="">اختر البديل...</option>';return}
+function fillSub(){const e=$("fe").value,cur=$("fs").value;if(e===""){$("fs").innerHTML='<option value="">بدون بديل</option>';return}
 const tm=$("fy").value==="زمنية",a=$("fa").value,b=tm?a:($("fb").value||a),x=tm?($("ft1").value||"00:00"):"00:00",y=tm?($("ft2").value||"24:00"):"24:00";
 const ok=STAFF.map((_,i)=>i).filter(i=>i!==+e&&!(a&&clash(i,a,b,x,y)));
 const sm=ok.filter(i=>same(+e,i));
-$("fs").innerHTML='<option value="">اختر البديل...</option>'+(sm.length?opts(sm,cur):'<option value="" disabled>لا يوجد بديل متاح في نفس القسم والشعبة</option>')}
+$("fs").innerHTML='<option value="">بدون بديل</option>'+(sm.length?opts(sm,cur):'<option value="" disabled>لا يوجد بديل متاح في نفس القسم والشعبة</option>')}
 $("fe").onchange=info;$("fy").onchange=togType;$("fa").onchange=$("fb").onchange=$("ft1").onchange=$("ft2").onchange=calc;
 $("f").onsubmit=e=>{e.preventDefault();if(!can("form"))return;
 const emp=+$("fe").value;if(!vis(emp))return msg("هذا الموظف خارج نطاق صلاحيتك","e");
