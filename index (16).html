@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SUPER CHICKEN – نظام الإجازات المتكامل</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--soft:#f8fafc;--tx:#1a202c;--mu:#64748b;--bd:#e2e8f0;--red:#d62d2d;--rd:#9b2121;--ye:#f2b705;--ok:#047857;--okb:#d1fae5;--wa:#b45309;--wab:#fef3c7;--no:#b91c2c;--nob:#fee2e2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--card:#1c2028;--soft:#232834;--tx:#e8ecf2;--mu:#9aa5b5;--bd:#2f3644;--ok:#6ee7b7;--okb:#064e3b;--wa:#fcd34d;--wab:#4a3410;--no:#fca5a5;--nob:#4c1d1d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12151b;--card:#1c2028;--soft:#232834;--tx:#e8ecf2;--mu:#9aa5b5;--bd:#2f3644;--ok:#6ee7b7;--okb:#064e3b;--wa:#fcd34d;--wab:#4a3410;--no:#fca5a5;--nob:#4c1d1d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',Tahoma,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:clip;overflow-wrap:break-word}
+@supports(height:100dvh){body{min-height:100dvh}}
+header{background:#1a202c;color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#1a202c;z-index:10}
+.hw{max-width:1150px;margin:auto;padding:12px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}.logo b{display:block;color:var(--ye);font-size:1.15rem;letter-spacing:.5px;font-family:system-ui,sans-serif}.logo small{color:#cbd5e1;font-size:.75rem}
+.ic{background:var(--red);border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-size:1.3rem}
+nav{display:flex;gap:4px;background:#2d3748;padding:4px;border-radius:12px;flex-wrap:wrap}
+nav button{border:0;background:none;color:#cbd5e1;padding:8px 14px;border-radius:9px;font:700 .85rem inherit;font-family:inherit;cursor:pointer}
+nav button.on{background:var(--red);color:#fff}
+main{max-width:1150px;margin:auto;padding:20px 16px 40px}
+.hide{display:none}
+.day .dh{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:14px}.dabs{text-align:center;color:var(--tx);font-size:1.05rem;font-weight:800}.day .dnv{justify-self:end}@media(max-width:760px){.day .dh{grid-template-columns:1fr;justify-items:center;text-align:center}.day .dnv{justify-self:center}}
+.dnv{display:flex;gap:6px;align-items:center}.dnv input,.dnv select{width:auto}.dnv .btn.sm{padding:7px 13px;font-size:.95rem}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(54px,1fr));gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}
+.dpl{border:1px solid var(--bd);background:var(--soft);color:var(--tx);border-radius:12px;padding:8px 4px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.dpl *{pointer-events:none}.dpl span{font-size:.74rem;color:var(--mu)}.dpl b{font-size:1.15rem}.dpl i{font-style:normal;font-size:.72rem;color:var(--mu);min-height:18px;padding:1px 8px;border-radius:99px}.dpl i.has{background:var(--wab);color:var(--wa);font-weight:700}
+.dpl.on{background:var(--red);border-color:var(--red);color:#fff}.dpl.on span,.dpl.on i{color:#fff}.dpl.on i.has{background:#ffffff33}
+.dgh{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.88rem;margin:12px 0 6px}.dgh span{background:var(--soft);border:1px solid var(--bd);border-radius:99px;font-size:.74rem;padding:0 8px;color:var(--mu)}
+.dr{display:grid;grid-template-columns:1.3fr 1fr 1.3fr auto;gap:8px 14px;align-items:center;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--soft);margin-bottom:6px}
+.dr b{font-weight:800;font-size:.95rem;color:var(--tx)}.dr .t{text-align:center}.dr .sb{text-align:center}@media(max-width:600px){.dr{grid-template-columns:1fr auto}.dr .t,.dr .sb{text-align:right}}.dempty{text-align:center;color:var(--mu);padding:18px 0;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+.stat h3{font-size:.82rem;color:var(--mu);font-weight:500}.stat .n{font-size:1.9rem;font-weight:800;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:14px}
+h2{font-size:1.05rem}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem;text-align:right}
+th,td{padding:10px 9px;border-bottom:1px solid var(--bd);vertical-align:middle}
+th{background:var(--soft);color:var(--mu);font-weight:700;white-space:nowrap}
+.bd{padding:3px 10px;border-radius:99px;font-size:.76rem;font-weight:700;display:inline-block;white-space:nowrap}
+.ok{background:var(--okb);color:var(--ok)}.wa{background:var(--wab);color:var(--wa)}.no{background:var(--nob);color:var(--no)}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--soft);color:var(--tx);font:inherit;font-size:.92rem}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--red);outline-offset:0}
+input[readonly]{opacity:.75}
+label{display:block;font-size:.82rem;font-weight:700;margin-bottom:5px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px}
+.btn{border:0;border-radius:10px;padding:9px 16px;font:700 .86rem inherit;font-family:inherit;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:var(--rd)}.btn.g2{background:#334155}.btn.sm{padding:4px 10px;font-size:.76rem}.btn.o{background:none;color:var(--red);border:1px solid var(--red)}.btn.gr{background:var(--ok);color:#fff}
+@media(prefers-color-scheme:dark){.btn.gr{color:#052e1f}}
+.msg{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:.86rem;font-weight:700}
+.msg.e{background:var(--nob);color:var(--no)}.msg.s{background:var(--okb);color:var(--ok)}
+.s1{max-width:230px}
+.sw{overflow-x:auto;padding:4px}
+.sw .sheet{zoom:var(--z,1)}
+.sheet{position:relative;background:#fff;color:#000;width:210mm;min-height:297mm;margin:auto;padding:11mm 12mm 9mm;font-size:.8rem;display:flex;flex-direction:column;box-shadow:0 2px 14px #0004}
+.sheet *{color:#000}.sheet>*{position:relative;z-index:1}.sheet>.wm{position:absolute;left:50%;top:50%;width:420px;transform:translate(-50%,-50%);opacity:.07;z-index:0}
+.lh{display:flex;align-items:center;gap:14px;margin-bottom:14px}.lh i{flex:1;height:2px;background:#d9363e}.lh img{width:150px}
+.mt{font-weight:800;margin:5px 0}
+.sheet table{border:1px solid #000;border-collapse:collapse;table-layout:fixed;margin-top:10px}
+.sheet th{background:#f4b183;border:1px solid #000;padding:6px 3px;font-size:.72rem;text-align:center;color:#000}
+.sheet td{border:1px solid #000;height:13mm;padding:2px 3px;font-size:.68rem;text-align:center;word-break:break-word;background:none}
+.sheet td,.sheet td *{color:#12308f;font-weight:800}.ap{border:1px solid #000;margin-top:16px;padding:10px;min-height:78px;font-weight:800}
+.ft{margin-top:auto;text-align:center;padding-top:18px}.ft p{color:#c8323c;font-size:.8rem}.ft div{display:flex;align-items:center;gap:12px;font-size:.78rem;font-weight:500}.ft i{flex:1;height:2px;background:#d9363e}
+.lgw{position:fixed;inset:0;background:var(--bg);z-index:30;display:grid;place-items:center;padding:16px}.lgc{width:100%;max-width:360px}.lgw.hide{display:none}
+.usr{color:#fff;font-size:.82rem;display:flex;gap:8px;align-items:center}
+.chip{display:inline-block;background:var(--soft);border:1px solid var(--bd);border-radius:99px;padding:3px 10px;margin:3px;font-size:.8rem}
+optgroup{font-style:normal}
+.msg:empty{display:none}
+.sheet .v{color:#12308f;font-weight:800}
+.tf{margin-bottom:18px}
+.tbx{border:1px solid #000;padding:14px 18px;margin-top:6px}
+.tt2{text-align:center;font-weight:800;font-size:1.05rem;margin:6px 0 18px}
+.sheet.tf table{table-layout:fixed;width:100%;margin-top:0}
+.sheet.tf td{color:#000;font-weight:700}
+.it td{text-align:right;height:11mm;padding:2px 12px;font-size:.82rem}
+.dt th{background:#b4c6e7;font-size:.72rem}
+.dt td{height:26mm;font-size:.8rem}
+.sheet select.mgs{width:auto;max-width:100%;border:0;background:none;font:inherit;font-size:.85rem;font-weight:800;color:#12308f;padding:2px 0;cursor:pointer}.sheet select.mgs option{color:#000;background:#fff}
+.mg{font-weight:800;font-size:1.05rem;margin:18px 0 4mm;min-height:22mm}
+.hb{border:1px solid #000;padding:14px 18px;min-height:34mm;font-weight:800;font-size:1.05rem;margin-top:12mm}
+.sw.two .sheet{break-after:page}
+@media print{.sheet select.mgs{appearance:none;-webkit-appearance:none}}
+@media print{.tf{break-after:page;margin:0}.tf:last-child{break-after:auto}}
+@media print{@page{size:A4;margin:0}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}body{background:#fff}body::before{display:none}.np,section:not(#t-sheet){display:none!important}#t-sheet{display:block!important}main{padding:0;max-width:none}.sw{padding:0;overflow:visible}.sheet{box-shadow:none;margin:0;min-height:296mm}}
+@media(max-width:700px){
+main{padding:14px 10px 32px}
+.card{padding:14px;border-radius:12px}
+.hw{padding:10px 12px;gap:8px}
+.logo b{font-size:1rem}.logo small{font-size:.68rem}.ic{width:36px;height:36px;font-size:1.1rem}
+header .hw>div:last-child{width:100%;flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:8px!important}
+nav{flex-wrap:nowrap;overflow-x:auto;min-width:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}nav::-webkit-scrollbar{display:none}nav button{white-space:nowrap;flex:none;padding:9px 13px}
+.usr{justify-content:space-between;font-size:.78rem}
+input,select,textarea{font-size:16px}
+.btn{min-height:40px}.btn.sm{min-height:34px}
+.s1{max-width:none;width:100%}
+.bar{flex-direction:column;align-items:stretch}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat .n{font-size:1.5rem}
+table{font-size:.82rem}th,td{padding:8px 7px}
+.wk{grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.dpl{padding:6px 2px;border-radius:10px}.dpl span{font-size:.6rem}.dpl b{font-size:1rem}.dpl i{font-size:.62rem;padding:0 5px}
+.lgc{max-width:none}
+.day .dnv{flex-wrap:wrap;justify-content:center;width:100%}.day .dnv select{flex:1 1 150px;min-width:0}
+}
+@media print{.sw .sheet{zoom:1!important}}
+</style>
+</head>
+<body>
+<header class="np"><div class="hw">
+<div class="logo"><div class="ic">🍗</div><div><b>SUPER CHICKEN</b><small>فرع الزعفرانية – نظام إدارة الإجازات</small></div></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><nav id="nav"></nav><div class="usr" id="usr"></div></div>
+</div></header>
+<div id="lg" class="lgw np"><div class="card lgc"><img class="lgi" alt="" style="width:200px;display:block;margin:0 auto 10px;background:#fff;border-radius:10px"><h2 style="text-align:center;margin-bottom:12px">تسجيل الدخول</h2><label>رقم الهاتف</label><input id="lph" dir="ltr" inputmode="tel" autocomplete="username" placeholder="07xxxxxxxxx"><label style="margin-top:10px">كلمة المرور</label><input id="lpw" type="password" autocomplete="current-password"><button class="btn" id="lb" style="width:100%;margin-top:14px">دخول</button><div id="lerr" class="msg e"></div></div></div>
+<div id="tst" class="msg e np" style="position:fixed;bottom:16px;left:16px;right:16px;z-index:40;max-width:520px;margin:auto"></div>
+<main>
+<section id="t-dash" class="hide">
+<div class="stats">
+<div class="card stat"><h3>عدد الموظفين</h3><div class="n" id="s1"></div></div>
+<div class="card stat"><h3>مجازون في اليوم المحدد</h3><div class="n" id="s2" style="color:var(--wa)"></div></div>
+<div class="card stat"><h3>طلبات قيد الانتظار</h3><div class="n" id="s3" style="color:var(--no)"></div></div>
+<div class="card stat"><h3>نسبة التغطية في اليوم المحدد</h3><div class="n" id="s4" style="color:var(--ok)"></div></div>
+</div>
+<div class="card day" style="margin-bottom:14px"><div class="dh"><h2 id="abt">إجازات اليوم</h2><b id="abs" class="dabs"></b><div class="dnv"><button class="btn sm g2" id="dp" title="الأسبوع السابق">›</button><select id="wsel"></select><input type="hidden" id="dd"><button class="btn sm g2" id="dn" title="الأسبوع التالي">‹</button><button class="btn sm o" id="dtd">اليوم</button></div></div><div id="strip" class="wk"></div><div id="ab"></div></div>
+<div class="card hide" id="cfg" style="margin-bottom:14px"><h2 style="margin-bottom:10px">الإعدادات والحدود</h2><div class="g">
+<div><label>الرصيد السنوي (أيام لكل موظف)</label><input type="number" id="cq" min="0"></div>
+<div><label>رصيد الإجازة الزمنية (ساعات شهرياً)</label><input type="number" id="ch" min="0"></div>
+<div><label>أقصى عدد غائبين يومياً في القسم الواحد</label><input type="number" id="cm" min="1"></div>
+<div><label>حد الإجازة الاعتيادية شهرياً (أيام)</label><input type="number" id="cmq" min="0"></div></div></div>
+<div class="card">
+<div class="bar"><div><h2 id="dt">أرصدة الموظفين</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="qd" class="s1"></select><input id="q" class="s1" placeholder="بحث باسم الموظف..."></div></div>
+<div class="wrap"><table><thead><tr><th>الموظف</th><th>القسم</th><th>اعتيادية: مستخدم</th><th>اعتيادية: متبقي</th><th>اعتيادية هذا الشهر</th><th>زمنية هذا الشهر</th><th>الحالة في اليوم المحدد</th><th></th></tr></thead><tbody id="bal"></tbody></table></div>
+</div>
+</section>
+<section id="t-form" class="hide">
+<div class="card"><h2 style="margin-bottom:4px">تقديم طلب إجازة</h2><small style="color:var(--mu);display:block;margin-bottom:14px">الإجازة اليومية أو الزمنية (بالساعات). عند اختيار فترة من عدة أيام يُضاف كل يوم في استمارة تاريخه.</small>
+<form id="f"><div class="g">
+<div><label>اسم الموظف</label><select id="fe" required></select></div>
+<div><label>العنوان الوظيفي</label><input id="ft" readonly></div>
+<div><label>القسم</label><input id="fdp" readonly></div>
+<div><label>الرصيد المتاح</label><input id="fr" readonly></div>
+<div><label>نوع الإجازة</label><select id="fy"></select></div>
+<div><label id="la">تاريخ البدء</label><input type="date" id="fa" required></div>
+<div id="wend"><label>تاريخ الانتهاء</label><input type="date" id="fb" required></div>
+<div id="wt1" class="hide"><label>من الساعة</label><input type="time" id="ft1"></div>
+<div id="wt2" class="hide"><label>إلى الساعة</label><input type="time" id="ft2"></div>
+<div><label>المدة</label><input id="fd" readonly value="1 يوم"></div>
+<div><label>الموظف البديل (اختياري)</label><select id="fs"></select></div>
+<div id="fsp" style="grid-column:1/-1"></div>
+<div style="grid-column:1/-1"><label>الملاحظات / السبب</label><input id="fn" placeholder="اختياري"></div>
+</div><div style="margin-top:14px"><button class="btn">إرسال الطلب</button></div>
+<div id="fm"></div></form></div>
+</section>
+<section id="t-mine" class="hide"><div class="stats" id="ms"></div><div class="card"><div class="bar"><div><h2>إجازاتي خلال الشهر</h2><small style="color:var(--mu)">يمكنك إلغاء الطلب ما دام قيد الانتظار</small></div><input type="month" id="mm" style="width:auto"></div><div class="wrap"><table><thead><tr><th>النوع</th><th>الفترة</th><th>أيام الشهر</th><th>المدة</th><th>البديل</th><th>الحالة</th><th></th></tr></thead><tbody id="mt"></tbody></table></div></div></section>
+<section id="t-reqs" class="hide">
+<div class="card"><div class="bar"><div><h2 id="rt">سجل الطلبات</h2><small style="color:var(--mu)">علّم الطلبات التي تريد ظهورها في الاستمارة الرسمية</small></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><select id="rs" class="s1"><option value="">كل الحالات</option><option value="p">قيد الانتظار</option><option value="a">مقبولة</option><option value="r">مرفوضة</option></select><input id="rq2" class="s1" placeholder="بحث باسم الموظف..."></div></div>
+<div class="wrap"><table><thead><tr><th>في الاستمارة</th><th>الموظف</th><th>البديل</th><th>النوع</th><th>الفترة</th><th>المدة</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="rq"></tbody></table></div></div>
+</section>
+<section id="t-perm" class="hide">
+<div class="card"><h2>صلاحيات كل دور</h2><small style="color:var(--mu)">كل ما يظهر للمستخدم يتحدد من هذا الجدول. مسؤول القسم وموظف الإسناد يريان إجازات قسمهما فقط، والإدارة والموارد يريان الجميع.</small><div class="wrap" style="margin-top:10px"><table id="pm"></table></div></div>
+<div class="card" style="margin-top:14px"><div class="bar"><div><h2>الأقسام والأدوار</h2><small style="color:var(--mu)">حدد قسم كل موظف ودوره. مسؤول القسم يرى إجازات القسم المحدد له فقط. اختر له القسم من عمود «مسؤول عن قسم»</small></div>
+<div style="display:flex;gap:8px"><input id="nd" class="s1" placeholder="اسم قسم جديد"><button class="btn" id="ad">إضافة قسم</button></div></div>
+<div class="wrap"><table><thead><tr><th>الموظف</th><th>العنوان الوظيفي</th><th>القسم</th><th>الشعبة</th><th>الدور</th><th>مسؤول عن قسم</th><th>رقم البصمة</th></tr></thead><tbody id="ro"></tbody></table></div></div>
+</section>
+<section id="t-users" class="hide"><div class="card"><h2>إنشاء مسؤول (Admin)</h2><div class="g"><div><label>الاسم</label><input id="an"></div><div><label>رقم الهاتف</label><input id="ap" dir="ltr" inputmode="tel"></div><div><label>كلمة المرور (6 أحرف فأكثر)</label><input id="aw"></div></div><div style="margin-top:12px"><button class="btn" id="ac">إنشاء مسؤول</button></div><div id="ua" style="margin-top:8px"></div></div>
+<div class="card" style="margin-top:14px"><h2>إضافة جماعية</h2><small style="color:var(--mu)">سطر لكل موظف: الاسم، الهاتف، كلمة المرور (مفصولة بفاصلة)</small><textarea id="ub" rows="6" style="margin-top:8px"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn g2" id="uf">ملء القالب بأسماء الموظفين</button><button class="btn" id="ui">إنشاء الحسابات</button></div></div>
+<div id="um"></div>
+<div class="card" style="margin-top:14px"><h2>حسابات الموظفين</h2><div class="wrap"><table><thead><tr><th>الموظف</th><th>الدور</th><th>الهاتف</th><th>كلمة المرور</th><th>الحالة</th><th></th></tr></thead><tbody id="ut"></tbody></table></div></div></section>
+<section id="t-none" class="hide"><div class="card">لا توجد لديك صلاحيات حالياً. راجع الموارد البشرية.</div></section>
+<section id="t-sheet" class="hide">
+<div class="bar np" style="flex-direction:column;justify-content:center;text-align:center"><div><h2>الاستمارة الرسمية (A4) – ليوم واحد</h2><small style="color:var(--mu)">تظهر فيها الإجازات المقبولة فقط لليوم المحدد، وكل يوم من أي فترة يظهر في استمارة تاريخه</small></div><div style="display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap"><button class="btn sm g2" id="sdn">اليوم التالي ◀</button><input type="date" id="sdt" style="width:auto"><button class="btn sm g2" id="sdp">▶ اليوم السابق</button><button class="btn g2" id="pr">🖨️ طباعة</button></div></div><div id="pmsg" class="np"></div>
+<div class="sw" id="shA"><div class="sheet">
+<img class="wm lgi" alt="">
+<div class="lh"><i></i><img class="lgi" alt=""><i></i></div>
+<div class="mt">التاريخ : <span id="sdd" dir="ltr" style="color:#12308f"></span></div>
+<div class="mt" style="display:grid;grid-template-columns:1fr auto 1fr"><span>الفرع : الزعفرانية</span><span>م/ طلب اجازة</span><span></span></div>
+<table><colgroup><col style="width:21%"><col style="width:17%"><col style="width:10%"><col style="width:15%"><col style="width:6%"><col style="width:15%"><col style="width:16%"></colgroup>
+<thead><tr><th>اسم الموظف</th><th>العنوان<br>الوظيفي</th><th>البديل</th><th>تاريخ<br>الاجازة</th><th>عدد<br>الأيام</th><th>نوع الاجازة</th><th>الملاحظات</th></tr></thead><tbody id="sb"></tbody></table>
+<div class="ap">ملاحظات وموافقة مدير الفرع :</div>
+<div class="ft"><p>فــرع الزعفرانيــة</p><div><i></i><span>فلكة المعهد - مجاور محطة عيون بغداد</span><i></i></div></div>
+</div></div>
+<div class="sw hide" id="shB"></div>
+</section>
+</main>
+<script>
+let STAFF=[];
+const SB_URL="https://mpjurewrxgsobrosbbgo.supabase.co",SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wanVyZXdyeGdzb2Jyb3NiYmdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NDExMDAsImV4cCI6MjExMDMxNzEwMH0.lajL6Dkxrf0mYgEgGNQTCYIjRywAhOwBhvJbH3vz6t0";
+const LOGO="data:image/jpeg;base64,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";
+const TYPES=["اعتيادية","زمنية","بدون راتب","غياب مضاعف"],K="sc_leave_v3";
+const CAPS={form:"تقديم طلب إجازة",mine:"عرض إجازاتي خلال الشهر",users:"إدارة المستخدمين وكلمات المرور",abs:"رفع غياب مضاعف (مسؤول القسم فقط)",dash:"لوحة الأرصدة",reqs:"سجل الطلبات",sheet:"الاستمارة الرسمية والطباعة",approve:"قبول ورفض الطلبات",del:"حذف الطلبات",quota:"تعديل الإعدادات والحدود",perm:"إدارة الصلاحيات والأقسام"};
+const ROLES={emp:"موظف",sup:"موظف إسناد",lead:"مسؤول قسم",mgr:"مدير الفرع",asst:"مساعد مدير الفرع",hr:"الموارد البشرية"},ALL=Object.keys(CAPS);
+const TABS=[["form","طلب إجازة"],["mine","إجازاتي"],["dash","لوحة الأرصدة"],["reqs","سجل الطلبات"],["sheet","الاستمارة الرسمية"],["perm","الصلاحيات والأقسام"],["users","المستخدمون"]];
+const ST={p:["قيد الانتظار","wa"],a:["مقبولة","ok"],r:["مرفوضة","no"]};
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fd=d=>d.replaceAll("-","/"),n1=x=>+(+x).toFixed(1);
+const nowD=new Date(),today=new Date(nowD-nowD.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+function load(){return{reqs:[],next:1,quota:24,hq:6,mx:3,mq:2,roles:{},leads:{},fp:{},div:{},dept:{},title:{},depts:[],perms:{emp:["form","mine"],sup:["form","mine","dash","reqs","sheet"],lead:["form","mine","dash","reqs","approve","sheet","abs"],mgr:ALL.filter(c=>c!=="abs"&&c!=="users"),asst:["form","mine","dash","reqs","approve","sheet"],hr:ALL.filter(c=>c!=="abs")}}}
+let S=load(),ME=null,sb=null;
+let tmr=0;const save=()=>{clearTimeout(tmr);tmr=setTimeout(sync,250)};
+const toast=t=>{$("tst").textContent=t;setTimeout(()=>{$("tst").textContent=""},7000)};
+const nm=s=>String(s).replace(/\s+/g," ").trim().replace(/[أإآ]/g,"ا");
+const normPh=s=>{s=String(s).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632).replace(/\D/g,"");if(s.startsWith("964"))s="0"+s.slice(3);else if(s.length===10&&s[0]==="7")s="0"+s;return s};
+const mail=p=>p+"@sc-leave.app";
+const scopeOf=i=>{const r=S.roles[i]||"emp";return r==="lead"?(S.leads[i]||[dept(i)]):r==="sup"?[dept(i)]:[]};
+function applyCfg(c){STAFF=c.staff||STAFF;["quota","hq","mx","mq"].forEach(k=>{if(c[k]!==undefined)S[k]=c[k]});["roles","leads","fp","div","dept","title"].forEach(k=>{S[k]=c[k]||{}});S.depts=c.depts||[...new Set(STAFF.map(s=>s[2]))];
+if(c.perms){S.perms=c.perms;for(const k in ROLES)if(!S.perms[k])S.perms[k]=load().perms[k];S.perms.hr=[...new Set([...S.perms.hr,...ALL.filter(x=>x!=="abs")])]}}
+const cfgOf=()=>({staff:STAFF,quota:S.quota,hq:S.hq,mx:S.mx,mq:S.mq,roles:S.roles,leads:S.leads,fp:S.fp,div:S.div,dept:S.dept,title:S.title,depts:S.depts,perms:S.perms});
+const bodyOf=r=>({mg:r.mg,sub:r.sub,s:r.s,e:r.e,days:r.days,hrs:r.hrs,t1:r.t1,t2:r.t2,type:r.type,note:r.note,sheet:r.sheet}),keyOf=r=>JSON.stringify([r.st,bodyOf(r)]);
+let SN=new Map(),SC="",SR={},busy=false,again=false,UP=[];
+const rkey=i=>JSON.stringify([S.roles[i]||"emp",scopeOf(i)]);
+async function loadReqs(){const{data,error}=await sb.from("reqs").select("*").order("id");if(error)throw error;
+S.reqs=(data||[]).map(x=>({...x.data,id:x.id,emp:x.emp,st:x.st}));SN=new Map(S.reqs.map(r=>[r.id,keyOf(r)]));SC=JSON.stringify(cfgOf());SR=Object.fromEntries(STAFF.map((_,i)=>[i,rkey(i)]))}
+async function loadUP(){const{data}=await sb.from("profiles").select("*");UP=data||[]}
+async function sync(){if(busy){again=true;return}busy=true;let ins=false;
+try{for(const r of S.reqs){if(r.id<0){const{data,error}=await sb.from("reqs").insert({emp:r.emp,dept:dept(r.emp),st:r.st,data:bodyOf(r)}).select("id").single();if(error)throw error;r.id=data.id;SN.set(r.id,keyOf(r));ins=true}
+else if(SN.get(r.id)!==keyOf(r)){const{error}=await sb.from("reqs").update({st:r.st,data:bodyOf(r)}).eq("id",r.id);if(error)throw error;SN.set(r.id,keyOf(r))}}
+for(const id of [...SN.keys()])if(!S.reqs.some(r=>r.id===id)){const{error}=await sb.from("reqs").delete().eq("id",id);if(error)throw error;SN.delete(id)}
+if((can("quota")||can("perm"))&&JSON.stringify(cfgOf())!==SC){const{error}=await sb.from("cfg").update({data:cfgOf()}).eq("id",1);if(error)throw error;SC=JSON.stringify(cfgOf());
+for(let i=0;i<STAFF.length;i++)if(rkey(i)!==SR[i]){const{error:e2}=await sb.from("profiles").update({role:S.roles[i]||"emp",scope:scopeOf(i)}).eq("emp",i);if(e2)throw e2;SR[i]=rkey(i)}}
+if(ins)renderAll()}catch(e){toast("تعذّر الحفظ: "+(e.message||e));try{await loadReqs()}catch(_){}renderAll()}
+busy=false;if(again){again=false;sync()}}
+const t12=t=>{const[h,m]=t.split(":"),x=+h;return(x%12||12)+(+m?":"+m:"")+" "+(x>=12&&x<24?"م":"ص")},dept=i=>S.dept[i]||STAFF[i][2],ttl=i=>S.title[i]||STAFF[i][1],TL=()=>[...new Set(STAFF.map(x=>x[1]).filter(Boolean))],dn=x=>String(x).replace(/(^|[\s\u00a0])قسم[\s\u00a0]+/g,"$1").trim();
+const div=i=>S.div[i]||"",same=(a,b)=>dept(a)===dept(b)&&div(a)===div(b);
+const role=()=>ME?ME.role:null;
+const can=c=>!!ME&&(S.perms[role()]||[]).includes(c);
+const who=()=>ME.name;
+const scopeD=()=>{const r=role();return r==="lead"?(S.leads[ME.i]||[dept(ME.i)]):r==="sup"?[dept(ME.i)]:[]};
+const canAbs=()=>can("abs")&&role()==="lead";
+const canAp=q=>can("approve")&&vis(q.emp)&&(q.type!=="غياب مضاعف"||role()==="mgr"||role()==="asst"||role()==="hr");
+const vis=i=>{const r=role();return r==="mgr"||r==="asst"||r==="hr"||(ME.t==="s"&&(i===ME.i||((r==="lead"||r==="sup")&&scopeD().includes(dept(i)))))};
+const live=r=>r.st!=="r",mins=t=>{const[h,m]=t.split(":");return h*60+ +m};
+const daysBetween=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5)+1;
+function dayList(s,e){const o=[];for(let d=new Date(s+"T00:00:00Z");d<=new Date(e+"T00:00:00Z");d=new Date(d.getTime()+864e5))o.push(d.toISOString().slice(0,10));return o}
+const addD=(d,n)=>{const x=new Date(d+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const annM=(i,ym)=>S.reqs.filter(r=>r.emp===i&&live(r)&&r.type==="اعتيادية").reduce((t,r)=>t+dayList(r.s,r.e).filter(d=>d.slice(0,7)===ym).length,0);
+const sum=(i,f)=>S.reqs.filter(r=>r.emp===i&&f(r)).reduce((t,r)=>t+(r.type==="زمنية"?r.hrs:r.type==="غياب مضاعف"?r.days*2:r.days),0);
+const ADED=r=>r.type==="اعتيادية"||r.type==="غياب مضاعف";
+const annUsed=i=>sum(i,r=>r.st==="a"&&ADED(r)),annPend=i=>sum(i,r=>r.st==="p"&&ADED(r));
+const sick=i=>sum(i,r=>r.st==="a"&&r.type==="مرضية"),hrsM=(i,ym)=>sum(i,r=>live(r)&&r.type==="زمنية"&&r.s.slice(0,7)===ym);
+const onLeave=(i,d=today)=>S.reqs.some(r=>r.emp===i&&r.st==="a"&&r.type!=="زمنية"&&r.s<=d&&d<=r.e);
+const clash=(i,a,b,x,y)=>S.reqs.find(r=>r.emp===i&&live(r)&&r.s<=b&&a<=r.e&&r.t1<y&&x<r.t2);
+const subN=r=>r.sub>=0?STAFF[r.sub][0]:"—";
+const per=r=>r.type==="زمنية"?fd(r.s)+"<br>"+r.t1+" - "+r.t2:fd(r.s)+(r.s!==r.e?" → "+fd(r.e):"");
+const dur=r=>r.type==="زمنية"?n1(r.hrs)+" س":r.type==="غياب مضاعف"?r.days+" (يُخصم "+r.days*2+")":r.days;
+function tab(n){if(n!=="none"&&!can(n))return;["dash","form","mine","reqs","sheet","perm","users","none"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==n));
+document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===n));{const ob=document.querySelector("#nav button.on");if(ob&&ob.scrollIntoView)ob.scrollIntoView({inline:"center",block:"nearest"})}window.scrollTo(0,0)}
+$("nav").onclick=e=>{const t=e.target.dataset.tab;if(t)tab(t)};
+const opts=(ids,sel)=>ids.map(i=>`<option value="${i}" ${String(sel)===String(i)?"selected":""}>${esc(STAFF[i][0])}</option>`).join("");
+function renderAll(){if(!ME)return;
+const dv=$("dd").value||today;$("dd").value=dv;const ids=STAFF.map((_,i)=>i).filter(vis),ym=today.slice(0,7),ab=ids.filter(i=>onLeave(i,dv));
+$("s1").textContent=ids.length;$("s2").textContent=ab.length;$("s3").textContent=S.reqs.filter(r=>r.st==="p"&&vis(r.emp)).length;
+$("s4").textContent=ids.length?Math.round((ids.length-ab.length)/ids.length*100)+"%":"-";
+const dl=S.reqs.filter(r=>live(r)&&vis(r.emp)&&r.s<=dv&&dv<=r.e),wd=d=>new Date(d+"T00:00:00Z").toLocaleDateString("ar-IQ",{weekday:"long",timeZone:"UTC"});
+$("abt").textContent=dv===today?"إجازات اليوم":"إجازات يوم "+wd(dv);$("abs").textContent=wd(dv)+" "+fd(dv).split("/").reverse().join("/")+" — "+dl.length+(dl.length===1?" إجازة":" إجازات");
+const sun=d=>addD(d,-new Date(d+"T00:00:00Z").getUTCDay()),w0=sun(dv);
+$("strip").innerHTML=dayList(w0,addD(w0,6)).map(d=>{const n=S.reqs.filter(r=>live(r)&&vis(r.emp)&&r.s<=d&&d<=r.e).length;return`<button class="dpl ${d===dv?"on":""}" data-gd="${d}"><span>${wd(d)}</span><b>${+d.slice(8)}</b><i class="${n?"has":""}">${n||"·"}</i></button>`}).join("");
+{const y=+dv.slice(0,4),m=+dv.slice(5,7),fst=dv.slice(0,8)+"01",lst=new Date(Date.UTC(y,m,0)).toISOString().slice(0,10),ORD=["الأول","الثاني","الثالث","الرابع","الخامس","السادس"],mn=new Date(dv+"T00:00:00Z").toLocaleDateString("ar-IQ",{month:"long",timeZone:"UTC"});let h="",w=sun(fst),k=0;
+while(w<=lst){const a=w<fst?fst:w,e2=addD(w,6),b=e2>lst?lst:e2;h+=`<option value="${w}" ${w===w0?"selected":""}>الأسبوع ${ORD[k]} · ${+a.slice(8)}–${+b.slice(8)} ${mn}</option>`;w=addD(w,7);k++}
+$("wsel").innerHTML=h;$("wsel").dataset.f=fst}
+const gp={};dl.forEach(r=>{const k=dn(dept(r.emp));(gp[k]=gp[k]||[]).push(r)});
+$("ab").innerHTML=Object.keys(gp).map(k=>`<div class="dgh">${esc(k)}<span>${gp[k].length}</span></div>`+gp[k].map(r=>`<div class="dr"><b>${esc(STAFF[r.emp][0])}</b><b class="t">${esc(r.type)}${r.type==="زمنية"?" "+n1(r.hrs)+" ساعة ( "+t12(r.t1)+" - "+t12(r.t2)+" )":""}</b><b class="sb">${r.sub>=0?"البديل: "+esc(subN(r)):"بدون بديل"}</b><span class="bd ${ST[r.st][1]}">${ST[r.st][0]}</span></div>`).join("")).join("")||'<div class="dempty">لا توجد إجازات في هذا اليوم</div>';
+const lsc=["lead","sup"].includes(role());$("dt").textContent=lsc?"أرصدة "+scopeD().map(dn).join(" + "):"أرصدة الموظفين";
+$("rt").textContent=lsc?"طلبات "+scopeD().map(dn).join(" + "):"سجل الطلبات";
+const all=role()==="mgr"||role()==="asst"||role()==="hr",cv=$("qd").value;
+$("qd").classList.toggle("hide",!all);$("qd").innerHTML='<option value="">كل الأقسام</option>'+S.depts.map(d=>`<option value="${esc(d)}">${esc(dn(d))}</option>`).join("");$("qd").value=cv;
+$("cfg").classList.toggle("hide",!can("quota"));$("cq").value=S.quota;$("ch").value=S.hq;$("cm").value=S.mx;$("cmq").value=S.mq;
+const q=$("q").value.trim(),qd=$("qd").value;
+$("bal").innerHTML=ids.filter(i=>STAFF[i][0].includes(q)&&(!qd||dept(i)===qd)).map(i=>{const u=annUsed(i),p=annPend(i),r=S.quota-u,l=onLeave(i,dv),h=hrsM(i,ym);
+return`<tr><td><b>${esc(STAFF[i][0])}</b><br><small style="color:var(--mu)">${esc(ttl(i))}</small></td><td>${esc(dn(dept(i)))}</td><td>${u}${p?` <small>(+${p} معلّق)</small>`:""}</td><td style="font-weight:800;color:${r<=2?"var(--no)":"var(--ok)"}">${r} يوم</td><td>${annM(i,ym)} / ${S.mq}</td><td>${n1(h)} / ${S.hq} س</td><td><span class="bd ${l?"wa":"ok"}">${l?"في إجازة":"حاضر"}</span></td><td>${can("form")&&(ME.t!=="s"||["sup","lead","mgr","asst","hr"].includes(role()))?`<button class="btn sm o" data-new="${i}">طلب إجازة</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="8" style="text-align:center;color:var(--mu)">لا يوجد موظفون</td></tr>';
+const fs=$("rs").value,q2=$("rq2").value.trim();
+$("rq").innerHTML=S.reqs.filter(r=>vis(r.emp)&&(!fs||r.st===fs)&&STAFF[r.emp][0].includes(q2)).sort((a,b)=>b.id-a.id).map(r=>{const[t,c]=ST[r.st];
+return`<tr><td style="text-align:center"><input type="checkbox" style="width:auto" data-sh="${r.id}" ${r.sheet?"checked":""} ${can("sheet")?"":"disabled"}></td><td><b>${esc(STAFF[r.emp][0])}</b><br><small style="color:var(--mu)">${esc(dn(dept(r.emp)))}</small></td><td>${esc(subN(r))}</td><td>${esc(r.type)}</td><td dir="ltr" style="white-space:nowrap">${per(r)}</td><td>${dur(r)}</td><td><span class="bd ${c}">${t}</span></td><td style="white-space:nowrap">${r.st==="p"&&canAp(r)?`<button class="btn sm gr" data-ap="${r.id}">قبول</button> <button class="btn sm" data-rj="${r.id}">رفض</button> `:""}${can("del")?`<button class="btn sm g2" data-del="${r.id}">حذف</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="8" style="text-align:center;color:var(--mu)">لا توجد طلبات</td></tr>';
+const D=$("sdt").value||today;$("sdt").value=D;$("sdd").textContent=fd(D).split("/").reverse().join(" / ");
+const sr=S.reqs.filter(r=>r.sheet&&r.st==="a"&&r.type!=="زمنية"&&vis(r.emp)&&r.s<=D&&D<=r.e),pad=Math.max(0,12-sr.length);
+$("sb").innerHTML=sr.map(r=>{const tm=r.type==="زمنية";return`<tr><td>${esc(STAFF[r.emp][0])}</td><td>${esc(ttl(r.emp))}</td><td>${esc(subN(r))}</td><td dir="ltr">${fd(D)}${tm?"<br>"+r.t1+" - "+r.t2:""}</td><td>${tm?n1(r.hrs)+" س":1}</td><td>${esc(r.type)}</td><td>${esc(r.note)}</td></tr>`}).join("")+"<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>".repeat(pad);
+renderTF(D);renderMine();renderPerm();renderUsers()}
+function renderMine(){if(!can("mine")||ME.t!=="s")return;const i=ME.i,ym=$("mm").value||today.slice(0,7);$("mm").value=ym;
+const L=S.reqs.filter(r=>r.emp===i&&r.s.slice(0,7)<=ym&&ym<=r.e.slice(0,7)).sort((a,b)=>a.s<b.s?-1:1);
+$("ms").innerHTML=[["اعتيادية هذا الشهر",annM(i,ym)+" / "+S.mq+" يوم"],["متبقي من الرصيد السنوي",(S.quota-annUsed(i)-annPend(i))+" يوم"],["الزمنية هذا الشهر",n1(hrsM(i,ym))+" / "+S.hq+" ساعة"]].map(([a,b])=>`<div class="card stat"><h3>${a}</h3><div class="n" style="font-size:1.5rem">${b}</div></div>`).join("");
+$("mt").innerHTML=L.map(r=>{const[t,c]=ST[r.st],dm=r.type==="زمنية"?[+r.s.slice(8)]:dayList(r.s,r.e).filter(d=>d.slice(0,7)===ym).map(d=>+d.slice(8));return`<tr><td>${esc(r.type)}</td><td dir="ltr" style="white-space:nowrap">${per(r)}</td><td>${dm.join("، ")}</td><td>${dur(r)}</td><td>${esc(subN(r))}</td><td><span class="bd ${c}">${t}</span></td><td>${r.st==="p"&&r.type!=="غياب مضاعف"?`<button class="btn sm g2" data-cx="${r.id}">إلغاء الطلب</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mu)">لا توجد إجازات في هذا الشهر</td></tr>'}
+function renderPerm(){if(!can("perm"))return;
+$("pm").innerHTML="<thead><tr><th>الصلاحية</th>"+Object.values(ROLES).map(r=>`<th>${r}</th>`).join("")+"</tr></thead><tbody>"+ALL.map(c=>`<tr><td><b>${CAPS[c]}</b></td>`+Object.keys(ROLES).map(k=>{const lock=k==="hr"||(c==="abs"&&k!=="lead");return`<td style="text-align:center"><input type="checkbox" style="width:auto" data-pm="${k}|${c}" ${S.perms[k].includes(c)?"checked":""} ${lock?"disabled":""}></td>`}).join("")+"</tr>").join("")+"</tbody>";
+$("ro").innerHTML=STAFF.map((s,i)=>{const r=S.roles[i]||"emp",d=dept(i),ld=(S.leads[i]||[])[0]||"",tc=ttl(i);return`<tr><td>${esc(s[0])}</td><td><select data-jt="${i}" style="max-width:190px">${TL().map(x=>`<option value="${esc(x)}" ${x===tc?"selected":""}>${esc(x)}</option>`).join("")}</select></td><td><select data-dp="${i}" style="max-width:170px">${S.depts.map(x=>`<option value="${esc(x)}" ${x===d?"selected":""}>${esc(dn(x))}</option>`).join("")}</select></td><td><input data-dv="${i}" value="${esc(div(i))}" placeholder="اختياري" style="width:110px"></td><td><select data-ro="${i}" style="max-width:130px">${Object.keys(ROLES).map(k=>`<option value="${k}" ${k===r?"selected":""}>${ROLES[k]}</option>`).join("")}</select></td><td>${`<select data-ld="${i}" style="max-width:170px"><option value="">—</option>${S.depts.map(x=>`<option value="${esc(x)}" ${x===ld?"selected":""}>${esc(dn(x))}</option>`).join("")}</select>`}</td><td><input data-fp="${i}" value="${esc(S.fp[i]||"")}" inputmode="numeric" style="width:90px"></td></tr>`}).join("")}
+const leadOf=r=>{const i=STAFF.findIndex((_,j)=>S.roles[j]==="lead"&&(S.leads[j]||[]).includes(dept(r.emp)));return i<0?"":STAFF[i][0]};
+const MGS=()=>STAFF.map(x=>x[0]).filter(n=>/^(سراج نعيم|عقيل ابراهيم)/.test(nm(n)));
+function mgSel(r){const L=leadOf(r),o=[...new Set([...MGS(),...(L?[L]:[]),...(r.mg?[r.mg]:[])])];if(!o.length)return"";
+const cur=r.mg!==undefined?r.mg:(o.includes(L)?L:o[0]);
+return`<div style="margin-top:6px"><select class="mgs" data-mg="${r.id}">${o.map(n=>`<option value="${esc(n)}" ${n===cur?"selected":""}>${esc(n)}</option>`).join("")}</select></div>`}
+function tform(r){const v=x=>`<span class="v">${esc(x)}</span>`,e=r?r.emp:0,f=g=>r?v(g):"";
+return`<div class="sheet tf"><img class="wm lgi" alt="" src="${LOGO}"><div class="lh"><i></i><img class="lgi" alt="" src="${LOGO}"><i></i></div><div class="tbx"><div class="tt2">نموذج طلب زمنية اثناء الدوام</div><table class="it"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tr><td>الاسم: ${f(STAFF[e][0])}</td><td>الموظف البديل: ${r?v(subN(r)):""}</td></tr><tr><td>العنوان الوظيفي: ${f(ttl(e))}</td><td rowspan="3"></td></tr><tr><td>القسم: ${f(dn(dept(e)))}</td></tr><tr><td>رقم البصمة: ${f(S.fp[e]||"")}</td></tr></table><table class="dt" style="margin-top:14px"><colgroup><col style="width:8%"><col style="width:11%"><col style="width:11%"><col style="width:24%"><col style="width:17%"><col style="width:17%"><col style="width:12%"></colgroup><thead><tr><th>عدد<br>الساعات</th><th>وقت الرجوع</th><th>وقت الخروج</th><th>السبب</th><th>توقيع الموظف</th><th>موافقة<br>المسؤول المباشر</th><th>التاريخ</th></tr></thead><tbody><tr><td>${f(r?n1(r.hrs):"")}</td><td dir="ltr">${f(r?r.t2:"")}</td><td dir="ltr">${f(r?r.t1:"")}</td><td>${f(r?r.note:"")}</td><td></td><td></td><td dir="ltr">${f(r?fd(r.s):"")}</td></tr></tbody></table><div class="mg">المدير المباشر${r?mgSel(r):""}</div></div><div class="hb">شؤون الموظفين</div><div class="ft"><p>فــرع الزعفرانيــة</p><div><i></i><span>فلكة المعهد - مجاور محطة عيون بغداد</span><i></i></div></div></div>`}
+function renderTF(D){const l=S.reqs.filter(r=>r.type==="زمنية"&&r.st==="a"&&r.sheet&&vis(r.emp)&&r.s===D);
+$("shB").innerHTML=l.map(r=>tform(r)).join("");$("shB").classList.toggle("hide",!l.length);$("shA").classList.toggle("two",l.length>0)}
+function splitLv(emp,s,en){let rem=S.quota-annUsed(emp)-annPend(emp);const mo={},runs=[];
+for(const d of dayList(s,en)){const k=d.slice(0,7);if(mo[k]===undefined)mo[k]=annM(emp,k);
+const ok=rem>0&&mo[k]<S.mq;if(ok){rem--;mo[k]++}
+const t=ok?"اعتيادية":"بدون راتب",l=runs[runs.length-1];if(l&&l.type===t)l.days.push(d);else runs.push({type:t,days:[d]})}
+return runs}
+function runTxt(runs){const all=runs.flatMap(r=>r.days),mm=new Set(all.map(d=>d.slice(0,7))).size>1,f=d=>mm?+d.slice(8)+"/"+ +d.slice(5,7):+d.slice(8);
+return runs.map(r=>{const D=r.days,t=D.length>3?"من "+f(D[0])+" إلى "+f(D[D.length-1])+" ("+D.length+" أيام)":"يوم "+D.map(f).join(" و");return t+" "+r.type}).join("، و")}
+function hint(){const el=$("fsp");if(!el)return;el.innerHTML="";const i=$("fe").value,a=$("fa").value,b=$("fb").value;
+if(i===""||$("fy").value!=="اعتيادية"||!a||!b||b<a)return;const runs=splitLv(+i,a,b);
+if(runs.length===1&&runs[0].type==="اعتيادية")return;
+el.innerHTML='<div class="msg" style="background:var(--wab);color:var(--wa);margin:0">'+(runs.length===1?"تنبيه: لا يتوفر رصيد اعتيادي لهذه الأيام، لذلك ستُحتسب جميعها بدون راتب":"تنبيه: الأيام تتجاوز الحد المسموح للإجازة الاعتيادية، لذلك ستُحتسب هكذا: "+runTxt(runs))+"</div>"}
+function msg(t,k){$("fm").innerHTML=`<div class="msg ${k}">${t}</div>`}
+function setupForm(){const own=ME&&ME.t==="s";
+const pk=own&&["sup","lead","mgr","asst","hr"].includes(role());$("fe").innerHTML=own&&!pk?opts([ME.i],ME.i):'<option value="">اختر الموظف...</option>'+opts(STAFF.map((_,i)=>i).filter(i=>!own||vis(i)),pk?ME.i:"");$("fe").disabled=own&&!pk;
+$("fy").innerHTML=TYPES.filter(t=>t!=="غياب مضاعف"||canAbs()).map(t=>`<option>${t}</option>`).join("");togType()}
+function togType(){const tm=$("fy").value==="زمنية";
+$("wend").classList.toggle("hide",tm);$("wt1").classList.toggle("hide",!tm);$("wt2").classList.toggle("hide",!tm);
+const ab=$("fy").value==="غياب مضاعف";$("fs").required=false;$("fn").required=ab;$("fn").placeholder=ab?"سبب الغياب (إلزامي)":"اختياري";$("fb").required=!tm;$("la").textContent=tm?"التاريخ":"تاريخ البدء";calc()}
+function calc(){const tm=$("fy").value==="زمنية",a=$("fa").value,b=tm?a:$("fb").value;
+if(tm){const x=$("ft1").value,y=$("ft2").value;$("fd").value=x&&y&&mins(y)>mins(x)?n1((mins(y)-mins(x))/60)+" ساعة":"-"}
+else $("fd").value=a&&b&&b>=a?daysBetween(a,b)+" يوم"+($("fy").value==="غياب مضاعف"?" (يُخصم "+daysBetween(a,b)*2+")":""):"-";info()}
+function info(){const i=$("fe").value;$("ft").value=i===""?"":ttl(+i);$("fdp").value=i===""?"":dn(dept(+i));
+const ym=($("fa").value||today).slice(0,7);
+$("fr").value=i===""?"":`اعتيادية: ${S.quota-annUsed(+i)-annPend(+i)} يوم (هذا الشهر ${annM(+i,ym)}/${S.mq}) · زمنية: ${n1(S.hq-hrsM(+i,ym))} ساعة`;fillSub();hint()}
+function fillSub(){const e=$("fe").value,cur=$("fs").value;if(e===""){$("fs").innerHTML='<option value="">بدون بديل</option>';return}
+const tm=$("fy").value==="زمنية",a=$("fa").value,b=tm?a:($("fb").value||a),x=tm?($("ft1").value||"00:00"):"00:00",y=tm?($("ft2").value||"24:00"):"24:00";
+const ok=STAFF.map((_,i)=>i).filter(i=>i!==+e&&!(a&&clash(i,a,b,x,y)));
+const sm=ok.filter(i=>same(+e,i));
+$("fs").innerHTML='<option value="">بدون بديل</option>'+(sm.length?opts(sm,cur):'<option value="" disabled>لا يوجد بديل متاح في نفس القسم والشعبة</option>')}
+$("fe").onchange=info;$("fy").onchange=togType;$("fa").onchange=$("fb").onchange=$("ft1").onchange=$("ft2").onchange=calc;
+$("f").onsubmit=e=>{e.preventDefault();if(!can("form"))return;
+const emp=+$("fe").value;if(!vis(emp))return msg("هذا الموظف خارج نطاق صلاحيتك","e");
+const type=$("fy").value,ab=type==="غياب مضاعف",sub=$("fs").value===""?-1:+$("fs").value,tm=type==="زمنية",s=$("fa").value,en=tm?s:$("fb").value;
+if(ab&&!canAbs())return msg("رفع الغياب المضاعف لمسؤولي الأقسام فقط","e");
+const t1=tm?$("ft1").value:"00:00",t2=tm?$("ft2").value:"24:00";
+if(!s||!en)return msg("اختر التاريخ","e");
+if(en<s)return msg("تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء","e");
+if(tm&&!(t1&&t2&&mins(t2)>mins(t1)))return msg("وقت النهاية يجب أن يكون بعد وقت البداية","e");
+if(emp===sub)return msg("لا يمكن اختيار نفس الموظف كبديل لنفسه","e");
+if(!ab&&sub>=0&&!same(emp,sub))return msg("البديل يجب أن يكون من نفس القسم والشعبة","e");
+const days=tm?0:daysBetween(s,en),hrs=tm?(mins(t2)-mins(t1))/60:0,rg=c=>fd(c.s)+(c.s!==c.e?" - "+fd(c.e):"");
+if(days>366)return msg("الفترة أطول من المسموح","e");
+let c=clash(emp,s,en,t1,t2);if(c)return msg("للموظف إجازة متداخلة ("+rg(c)+")","e");
+c=clash(sub,s,en,t1,t2);if(c)return msg("البديل لديه إجازة في نفس الفترة ("+rg(c)+")، اختر بديلاً آخر","e");
+if(tm&&hrs>S.hq-hrsM(emp,s.slice(0,7)))return msg("الساعات تتجاوز رصيد الإجازة الزمنية لهذا الشهر ("+n1(S.hq-hrsM(emp,s.slice(0,7)))+" ساعة)","e");
+if(!tm&&!ab)for(const d of dayList(s,en)){const n=STAFF.filter((_,i)=>i!==emp&&dept(i)===dept(emp)&&S.reqs.some(r=>r.emp===i&&live(r)&&r.type!=="زمنية"&&r.s<=d&&d<=r.e)).length;
+if(n>=S.mx)return msg("بلغ قسم "+esc(dn(dept(emp)))+" الحد الأقصى للغياب ("+S.mx+") في يوم "+fd(d),"e")}
+const runs=type==="اعتيادية"?splitLv(emp,s,en):[{type,days:dayList(s,en)}],note=$("fn").value.trim();
+runs.forEach(r=>{const D=r.days;S.reqs.push({id:-(S.next++),emp,sub,s:tm?s:D[0],e:tm?en:D[D.length-1],days:tm?0:D.length,hrs,t1,t2,type:r.type,note,st:"p",sheet:true})});
+save();$("f").reset();setupForm();renderAll();
+msg(runs.length>1||(type==="اعتيادية"&&runs[0].type!=="اعتيادية")?"تم إرسال الطلب وهو قيد الانتظار. تنبيه: "+(runs.length>1?"تم احتساب "+runTxt(runs):"لا يتوفر رصيد اعتيادي، فاحتُسبت جميع الأيام بدون راتب"):"تم إرسال الطلب وهو الآن قيد الانتظار","s")};
+document.addEventListener("click",e=>{const d=e.target.dataset;if(!d)return;const r=id=>S.reqs.find(x=>x.id==id);
+if(d.cx){const q=r(d.cx);if(q&&ME.t==="s"&&q.emp===ME.i&&q.st==="p"&&q.type!=="غياب مضاعف"){S.reqs=S.reqs.filter(x=>x.id!=d.cx);save();renderAll()}return}
+if(d.uc!==undefined){doUC(+d.uc);return}
+if(d.ud!==undefined){doUD(+d.ud);return}
+if(d.gd){$("dd").value=d.gd;renderAll();return}
+if(d.new!==undefined){tab("form");if(!$("fe").disabled){$("fe").value=d.new;info()}return}
+if(d.ap&&canAp(r(d.ap))){r(d.ap).st="a"}else if(d.rj&&canAp(r(d.rj))){r(d.rj).st="r"}else if(d.del&&can("del")){if(!confirm("حذف الطلب نهائياً؟"))return;S.reqs=S.reqs.filter(x=>x.id!=d.del)}else return;
+save();renderAll()});
+document.addEventListener("change",e=>{const t=e.target,{pm,ro,dp,sh,fp,ld,dv,jt,mg}=t.dataset;
+if(mg!==undefined&&can("sheet")){const q=S.reqs.find(x=>x.id==mg);if(q){q.mg=t.value;save();renderAll()}return}
+if(pm&&can("perm")){const[k,c]=pm.split("|"),a=S.perms[k];S.perms[k]=t.checked?[...new Set([...a,c])]:a.filter(x=>x!==c);save();if(k===role())enter();return}
+if(ro!==undefined&&can("perm")){S.roles[ro]=t.value;if(t.value==="lead"&&!S.leads[ro])S.leads[ro]=[dept(+ro)];save();renderAll();if(ME.t==="s"&&+ro===ME.i)enter();return}
+if(jt!==undefined&&can("perm")){if(t.value===STAFF[jt][1])delete S.title[jt];else S.title[jt]=t.value;save();renderAll();return}
+if(dp!==undefined&&can("perm")){S.dept[dp]=t.value;save();renderAll();return}
+if(ld!==undefined&&can("perm")){S.leads[ld]=t.value?[t.value]:[];save();renderAll();return}
+if(dv!==undefined&&can("perm")){S.div[dv]=t.value.trim();save();return}
+if(fp!==undefined&&can("perm")){S.fp[fp]=t.value.trim();save();return}
+if(sh&&can("sheet")){S.reqs.find(x=>x.id==sh).sheet=t.checked;save();renderAll()}});
+$("ad").onclick=()=>{const v=$("nd").value.trim();if(v&&!S.depts.includes(v)){S.depts.push(v);$("nd").value="";save();renderAll()}};
+[["cq","quota",0],["ch","hq",0],["cm","mx",1],["cmq","mq",0]].forEach(([i,k,m])=>$(i).onchange=e=>{if(!can("quota"))return;S[k]=Math.max(m,+e.target.value||0);save();renderAll()});
+$("q").oninput=$("qd").onchange=$("rs").onchange=$("rq2").oninput=renderAll;
+$("pr").onclick=()=>{try{window.print()}catch(e){}$("pmsg").innerHTML='<div class="msg e">إن لم تظهر نافذة الطباعة استخدم Ctrl+P</div>'};
+const shiftDay=n=>{const d=new Date(($("sdt").value||today)+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);$("sdt").value=d.toISOString().slice(0,10);renderAll()};
+const shiftDash=n=>{$("dd").value=addD($("dd").value||today,n*7);renderAll()};
+$("dn").onclick=()=>shiftDash(1);$("dp").onclick=()=>shiftDash(-1);$("dtd").onclick=()=>{$("dd").value=today;renderAll()};$("dd").onchange=renderAll;$("wsel").onchange=()=>{const f=$("wsel").dataset.f,v=$("wsel").value;$("dd").value=v<f?f:v;renderAll()};$("mm").onchange=renderAll;
+$("sdn").onclick=()=>shiftDay(1);$("sdp").onclick=()=>shiftDay(-1);$("sdt").onchange=renderAll;
+function enter(){$("lg").classList.add("hide");const ts=TABS.filter(t=>can(t[0])&&(t[0]!=="mine"||ME.t==="s")&&(t[0]!=="users"||ME.admin||role()==="hr"));
+$("nav").innerHTML=ts.map(t=>`<button data-tab="${t[0]}">${t[1]}</button>`).join("");
+$("usr").innerHTML=`<span>👤 ${esc(who())} · ${ROLES[role()]}</span><button class="btn sm g2" id="out">خروج</button>`;
+$("out").onclick=async()=>{await sb.auth.signOut();location.reload()};
+setupForm();renderAll();tab(ts.length?ts[0][0]:"none")}
+
+function renderUsers(){if(!can("users")||!ME.admin&&role()!=="hr")return;
+const by=Object.fromEntries(UP.filter(p=>p.emp!=null).map(p=>[p.emp,p]));
+$("ut").innerHTML=STAFF.map((s,i)=>{const p=by[i];return`<tr><td>${esc(s[0])}<br><small style="color:var(--mu)">${esc(dn(dept(i)))}</small></td><td>${ROLES[S.roles[i]||"emp"]}</td><td><input data-up="${i}" value="${esc(p?p.phone:"")}" placeholder="07xxxxxxxxx" inputmode="tel" dir="ltr" style="width:140px"></td><td><input data-uw="${i}" placeholder="${p?"اتركها دون تغيير":"كلمة المرور"}" style="width:150px"></td><td>${p?'<span class="bd ok">له حساب</span>':'<span class="bd wa">بدون حساب</span>'}</td><td style="white-space:nowrap"><button class="btn sm" data-uc="${i}">${p?"تحديث":"إنشاء"}</button>${p?` <button class="btn sm g2" data-ud="${i}">حذف الحساب</button>`:""}</td></tr>`}).join("");
+$("ua").innerHTML=UP.filter(p=>p.emp==null).map(p=>`<span class="chip">${esc(p.name||"")} · ${esc(p.phone)}</span>`).join("")}
+const umsg=(t,k)=>{$("um").innerHTML=`<div class="msg ${k}">${t}</div>`};
+const errT=e=>/already|registered/i.test(e.message||"")?"الرقم مسجّل مسبقاً":(e.message||String(e));
+const tmpC=()=>supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+async function makeUser(i,phone,pw){const ph=normPh(phone);if(ph.length<10)throw Error("رقم الهاتف غير صالح");const p=UP.find(x=>x.emp===i);
+if(p){if(ph!==p.phone||pw){const{error}=await sb.rpc("admin_set_login",{target:p.uid,em:ph!==p.phone?mail(ph):null,pw:pw||null});if(error)throw error}
+if(ph!==p.phone){const{error}=await sb.from("profiles").update({phone:ph}).eq("uid",p.uid);if(error)throw error}return}
+if((pw||"").length<6)throw Error("كلمة المرور 6 أحرف على الأقل");
+const{data,error}=await tmpC().auth.signUp({email:mail(ph),password:pw});if(error)throw error;
+const{error:e2}=await sb.from("profiles").insert({uid:data.user.id,emp:i,phone:ph,name:STAFF[i][0],role:S.roles[i]||"emp",scope:scopeOf(i)});if(e2)throw e2}
+async function doUC(i){const ph=document.querySelector(`[data-up="${i}"]`).value,pw=document.querySelector(`[data-uw="${i}"]`).value;
+try{await makeUser(i,ph,pw);await loadUP();renderUsers();umsg("تم حفظ حساب "+esc(STAFF[i][0]),"s")}catch(e){umsg(esc(errT(e)),"e")}}
+async function doUD(i){const p=UP.find(x=>x.emp===i);if(!p||!confirm("حذف حساب "+STAFF[i][0]+"؟"))return;
+const{error}=await sb.rpc("admin_delete_user",{target:p.uid});if(error)return umsg(esc(errT(error)),"e");await loadUP();renderUsers();umsg("تم حذف الحساب","s")}
+$("ac").onclick=async()=>{const ph=normPh($("ap").value),pw=$("aw").value;try{if(ph.length<10)throw Error("رقم الهاتف غير صالح");if(pw.length<6)throw Error("كلمة المرور 6 أحرف على الأقل");
+const{data,error}=await tmpC().auth.signUp({email:mail(ph),password:pw});if(error)throw error;
+const{error:e2}=await sb.from("profiles").insert({uid:data.user.id,emp:null,phone:ph,name:$("an").value.trim()||"مسؤول",role:"hr",is_admin:true,scope:[]});if(e2)throw e2;
+await loadUP();renderUsers();umsg("تم إنشاء المسؤول","s")}catch(e){umsg(esc(errT(e)),"e")}};
+$("uf").onclick=()=>{$("ub").value=STAFF.map(s=>s[0]+",,").join("\n")};
+$("ui").onclick=async()=>{const L=$("ub").value.split("\n").map(l=>l.split(/[,\t،;]/).map(x=>x.trim())).filter(a=>a[0]&&a[1]);let ok=0;const bad=[];
+for(const[n,ph,pw]of L){const i=STAFF.findIndex(s=>nm(s[0])===nm(n));if(i<0){bad.push(esc(n)+": الاسم غير موجود");continue}
+try{await makeUser(i,ph,pw);ok++}catch(e){bad.push(esc(n)+": "+esc(errT(e)))}await new Promise(r=>setTimeout(r,500))}
+await loadUP();renderUsers();umsg("تم إنشاء/تحديث "+ok+" حساباً"+(bad.length?"<br>"+bad.join("<br>"):""),bad.length?"e":"s")};
+async function boot(u){const{data:p}=await sb.from("profiles").select("*").eq("uid",u.id).maybeSingle();
+if(!p){await sb.auth.signOut();$("lerr").textContent="حسابك غير مرتبط بموظف. راجع الإدارة";return}
+const c=await sb.from("cfg").select("data").eq("id",1).single();applyCfg(c.data?c.data.data:{});
+if(p.emp!=null&&!STAFF[p.emp]){$("lerr").textContent="بيانات الموظف غير موجودة";return}
+ME=p.emp!=null?{t:"s",i:p.emp,role:p.role,name:STAFF[p.emp][0],admin:p.is_admin}:{t:"hr",role:"hr",name:p.name||"المسؤول",admin:true};
+try{await loadReqs();if(ME.admin||role()==="hr")await loadUP()}catch(e){$("lerr").textContent="تعذّر تحميل البيانات: "+(e.message||e);return}
+$("lerr").textContent="";enter()}
+async function doLogin(){const ph=normPh($("lph").value),pw=$("lpw").value;$("lerr").textContent="";
+const{data,error}=await sb.auth.signInWithPassword({email:mail(ph),password:pw});
+if(error){$("lerr").textContent="رقم الهاتف أو كلمة المرور غير صحيحة";return}await boot(data.user)}
+function initLogin(){document.querySelectorAll(".lgi").forEach(i=>i.src=LOGO);
+if(!SB_URL.startsWith("http")||SB_URL.includes("YOUR-")){$("lerr").textContent="لم يُربط الموقع بقاعدة البيانات بعد. راجع ملف README";return}
+sb=supabase.createClient(SB_URL,SB_KEY);$("lb").onclick=doLogin;$("lpw").onkeydown=e=>{if(e.key==="Enter")doLogin()};
+sb.auth.getSession().then(({data})=>{if(data.session)boot(data.session.user)});
+document.addEventListener("visibilitychange",async()=>{if(!document.hidden&&ME&&!busy){try{await loadReqs();renderAll()}catch(e){}}})}
+const fit=()=>document.documentElement.style.setProperty("--z",Math.min(1,Math.max(.3,(document.documentElement.clientWidth-28)/794)).toFixed(3));
+fit();addEventListener("resize",fit);addEventListener("beforeprint",()=>document.documentElement.style.setProperty("--z",1));addEventListener("afterprint",fit);
+initLogin();
+</script>
+</body>
+</html>
